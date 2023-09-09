@@ -1,18 +1,23 @@
-import { StyleSheet, Text, TextInput, View, Button } from "react-native";
-import React from "react";
+import { StyleSheet, Text, TextInput, View, Button, FlatList } from "react-native";
+import React, { useState } from "react";
 
 export default function App() {
-  const [contact, setContact] = React.useState("");
-
-  //TODO: Tip 1 for the assignment 2
-  //const [contacts, setContacts] = React.useState([]);
+  const [contact, setContact] = useState("");
+  const [contacts, setContacts] = useState([]); // Lista de contactos
 
   const addContactHandler = () => {
-    console.log(contact);
-
-    //TODO: Tip 2 for the assignment 2
-    //setContacts([...contacts, { name: contact }]);
+    if (contact.trim() != "") {
+      setContacts([...contacts, { name: contact }]);
+      setContact("");
+    }
   };
+
+  const renderContactItem = ({ item }) => (
+    <View style={styles.contactItem}>
+      <Text>{item.name}</Text>
+    </View>
+  );
+
   return (
     <View style={styles.appContainer}>
       <View style={styles.inputContainer}>
@@ -20,38 +25,51 @@ export default function App() {
           style={styles.textInput}
           placeholder="Contact information"
           onChangeText={(text) => setContact(text)}
+          value={contact}
         />
         <Button title="Add Contact" onPress={addContactHandler} />
       </View>
+
       <View style={styles.contactsContainer}>
-        <Text>List of Contacts...</Text>
+        <Text>List of Contacts:</Text>
+
+        <FlatList
+          data={contacts}
+          renderItem={renderContactItem}
+          keyExtractor={(item) => item.name}
+        />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  flatList: {
+    backgroundColor: "#0000"
+  },
   appContainer: {
     flex: 1,
-    padding: 80,
-    paddingHorizontal: 16,
+    padding: 40,
+    paddingTop: 50
   },
   inputContainer: {
-    flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     alignItems: "center",
     marginBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: "#cccccc",
   },
   textInput: {
+    flex: 1,
     borderWidth: 1,
     borderColor: "#cccccc",
-    width: "70%",
     marginRight: 10,
     padding: 10,
   },
   contactsContainer: {
-    flex: 6,
+    flex: 1,
+  },
+  contactItem: {
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#cccccc",
   },
 });
